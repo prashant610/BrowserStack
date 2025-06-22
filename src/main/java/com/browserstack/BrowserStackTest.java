@@ -48,10 +48,10 @@ public class BrowserStackTest {
         capsList.add(safariCaps);
 
         Map<String, String> iphoneCaps = new HashMap<>();
-        iphoneCaps.put("device", "iPhone 13");
+        iphoneCaps.put("device", "iPhone 14 Plus");
         iphoneCaps.put("real_mobile", "true");
-        iphoneCaps.put("os_version", "15.0");
-        iphoneCaps.put("browserName", "iPhone");
+        iphoneCaps.put("os_version", "18.4.1");
+        iphoneCaps.put("browserName", "Chrome");
         iphoneCaps.put("name", "iPhoneTest");
         capsList.add(iphoneCaps);
 
