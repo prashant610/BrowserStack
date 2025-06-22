@@ -24,9 +24,9 @@ public class ElPaisScraper {
                         ExpectedConditions.elementToBeClickable(By.xpath("//button[@id='didomi-notice-agree-button']"))
                 );
                 allowCookiesButton.click();
-                System.out.println("✅ 'Allow Cookies' button clicked.");
+                System.out.println("Allow Cookies' button clicked.");
             } catch (Exception e) {
-                System.out.println("ℹ️ 'Allow Cookies' button not found or already handled.");
+                System.out.println("Allow Cookies' button not found or already handled.");
             }
 
             // ✅ Step 2: Wait for articles to load
@@ -34,7 +34,7 @@ public class ElPaisScraper {
             List<WebElement> articles = driver.findElements(By.tagName("article"));
 
             int count = Math.min(5, articles.size());
-            System.out.println("✅ Found " + articles.size() + " articles. Extracting top " + count + "...\n");
+            System.out.println("Found " + articles.size() + " articles. Extracting top " + count + "...\n");
 
             List<String> translatedTitles = new ArrayList<>();
 
@@ -52,12 +52,12 @@ public class ElPaisScraper {
                     WebElement header = article.findElement(By.tagName("header"));
                     if (header != null) {
                         title = header.getText().trim();
-                        System.out.println("✅ Article #" + (i + 1) + " Title found.");
+                        System.out.println("Article #" + (i + 1) + " Title found.");
                     } else {
-                        System.out.println("⚠️ Header not found for article #" + (i + 1));
+                        System.out.println("Header not found for article #" + (i + 1));
                     }
                 } catch (Exception e) {
-                    System.out.println("⚠️ No header for article #" + (i + 1));
+                    System.out.println("No header for article #" + (i + 1));
                 }
 
                 // ✅ Content
@@ -66,10 +66,10 @@ public class ElPaisScraper {
                     WebElement para = article.findElement(By.tagName("p"));
                     if (para != null) {
                         content = para.getText().trim();
-                        System.out.println("✅ Content found for article #" + (i + 1));
+                        System.out.println("Content found for article #" + (i + 1));
                     }
                 } catch (Exception e) {
-                    System.out.println("⚠️ No paragraph for article #" + (i + 1));
+                    System.out.println("No paragraph for article #" + (i + 1));
                 }
 
                 // ✅ Image
@@ -80,10 +80,10 @@ public class ElPaisScraper {
                     if (imageUrl != null && !imageUrl.isEmpty()) {
                         downloadImage(imageUrl, "article_" + (i + 1) + ".jpg");
                     } else {
-                        System.out.println("ℹ️ Image src is empty for article #" + (i + 1));
+                        System.out.println("Image src is empty for article #" + (i + 1));
                     }
                 } catch (Exception e) {
-                    System.out.println("ℹ️ No image for article #" + (i + 1));
+                    System.out.println("No image for article #" + (i + 1));
                 }
 
                 // ✅ Translate Title
@@ -103,7 +103,7 @@ public class ElPaisScraper {
             printRepeatedWords(translatedTitles);
 
         } catch (Exception e) {
-            System.err.println("❌ Error during scraping:");
+            System.err.println("Error during scraping:");
             e.printStackTrace();
         }
     }
@@ -111,9 +111,9 @@ public class ElPaisScraper {
     private static void downloadImage(String imageUrl, String fileName) {
         try (InputStream in = new URL(imageUrl).openStream()) {
             Files.copy(in, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("✅ Image downloaded: " + fileName);
+            System.out.println("Image downloaded: " + fileName);
         } catch (Exception e) {
-            System.out.println("❌ Failed to download image: " + imageUrl);
+            System.out.println("Failed to download image: " + imageUrl);
         }
     }
 
@@ -128,7 +128,7 @@ public class ElPaisScraper {
             }
         }
 
-        System.out.println("\n🔍 Repeated words (more than twice) in translated titles:");
+        System.out.println("\n Repeated words (more than twice) in translated titles:");
 
         boolean[] found = {false};
 
@@ -136,12 +136,12 @@ public class ElPaisScraper {
                 .filter(e -> e.getValue() > 2)
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .forEach(e -> {
-                    System.out.println("🔁 " + e.getKey() + ": " + e.getValue());
+                    System.out.println(e.getKey() + ": " + e.getValue());
                     found[0] = true;
                 });
 
         if (!found[0]) {
-            System.out.println("ℹ️ No words repeated more than twice.");
+            System.out.println("No words repeated more than twice.");
         }
     }
 }

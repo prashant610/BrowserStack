@@ -39,7 +39,7 @@ public class TranslateUtil {
             }
 
         } catch (Exception e) {
-            System.err.println("❌ Translation failed. Returning original text.");
+            System.err.println("Translation failed. Returning original text.");
             e.printStackTrace();
             return text;
         }

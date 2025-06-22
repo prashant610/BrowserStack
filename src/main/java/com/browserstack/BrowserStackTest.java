@@ -72,15 +72,15 @@ public class BrowserStackTest {
                         capabilities.setCapability(entry.getKey(), entry.getValue());
                     }
 
-                    System.out.println("🚀 Starting test: " + caps.get("name"));
+                    System.out.println("Starting test: " + caps.get("name"));
 
                     driver = new RemoteWebDriver(new URL(URL_STRING), capabilities);
                     ElPaisScraper.run(driver);  // Run scraper
 
-                    System.out.println("✅ Completed test: " + caps.get("name"));
+                    System.out.println("Completed test: " + caps.get("name"));
 
                 } catch (Exception e) {
-                    System.err.println("❌ Error in test: " + caps.get("name"));
+                    System.err.println("Error in test: " + caps.get("name"));
                     e.printStackTrace();
                 } finally {
                     if (driver != null) {
