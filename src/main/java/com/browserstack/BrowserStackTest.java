@@ -3,6 +3,8 @@ package com.browserstack;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.*;
@@ -12,12 +14,13 @@ import java.util.concurrent.TimeUnit;
 
 public class BrowserStackTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(BrowserStackTest.class);
+
     public static void main(String[] args) throws Exception {
-        final String USERNAME = "prashantpandey_k5QEPX";
-        final String ACCESS_KEY = "FhYXVjxAyHCu7JUTcWfC";
+        final String USERNAME = "prashantpandey_iUFMJl";
+        final String ACCESS_KEY = "zKA8iq546uMJAbLhuNvd";
         final String URL_STRING = "https://" + USERNAME + ":" + ACCESS_KEY + "@hub-cloud.browserstack.com/wd/hub";
 
-        // Capability sets
         List<Map<String, String>> capsList = new ArrayList<>();
 
         Map<String, String> chromeCaps = new HashMap<>();
@@ -60,7 +63,6 @@ public class BrowserStackTest {
         androidCaps.put("name", "AndroidTest");
         capsList.add(androidCaps);
 
-        // Use ExecutorService for thread management
         ExecutorService executor = Executors.newFixedThreadPool(capsList.size());
 
         for (final Map<String, String> caps : capsList) {
@@ -72,30 +74,25 @@ public class BrowserStackTest {
                         capabilities.setCapability(entry.getKey(), entry.getValue());
                     }
 
-                    System.out.println("Starting test: " + caps.get("name"));
-
+                    logger.info("Starting test: {}", caps.get("name"));
                     driver = new RemoteWebDriver(new URL(URL_STRING), capabilities);
-                    ElPaisScraper.run(driver);  // Run scraper
 
-                    System.out.println("Completed test: " + caps.get("name"));
+                    ElPaisScraper.run(driver);
 
+                    logger.info("Completed test: {}", caps.get("name"));
                 } catch (Exception e) {
-                    System.err.println("Error in test: " + caps.get("name"));
-                    e.printStackTrace();
+                    logger.error("Error in test: {}", caps.get("name"), e);
                 } finally {
                     if (driver != null) {
                         driver.quit();
-                        System.out.println("🧹 Browser closed for: " + caps.get("name"));
+                        logger.info("Browser closed for: {}", caps.get("name"));
                     }
                 }
             });
         }
 
-        // Shutdown executor and exit
         executor.shutdown();
         executor.awaitTermination(10, TimeUnit.MINUTES);
-
-        // Kill any remaining threads (OkHttp etc.)
         System.exit(0);
     }
 }
