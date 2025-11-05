@@ -7,10 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.*;
 
 public class ElPaisScraper {
@@ -71,12 +70,24 @@ public class ElPaisScraper {
 
                 String imageUrl = "";
                 try {
-                    WebElement figure = article.findElement(By.cssSelector("figure"));
-                    WebElement img = figure.findElement(By.tagName("img"));
+                    WebElement img = article.findElement(By.cssSelector("div span img"));
+
                     imageUrl = img.getAttribute("src");
-                    downloadImage(imageUrl, "article_" + (i + 1) + ".jpg");
+                    if (imageUrl == null || imageUrl.isEmpty()) {
+                        String srcset = img.getAttribute("srcset");
+                        if (srcset != null && !srcset.isEmpty()) {
+                            imageUrl = srcset.split("\\s+")[0];
+                        }
+                    }
+
+                    if (imageUrl != null && !imageUrl.isEmpty() && imageUrl.startsWith("http")) {
+                        downloadImage(imageUrl, "article_" + (i + 1) + ".jpg");
+                    } else {
+                        logger.warn("No valid image URL for article #{}", i + 1);
+                    }
+
                 } catch (Exception e) {
-                    logger.warn("No image for article #{}", i + 1);
+                    logger.warn("No image found for article #{}", i + 1);
                 }
 
                 String translatedTitle = TranslateUtil.translateText(title);
@@ -94,11 +105,31 @@ public class ElPaisScraper {
     }
 
     private static void downloadImage(String imageUrl, String fileName) {
-        try (InputStream in = new URL(imageUrl).openStream()) {
-            Files.copy(in, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
-            logger.info("Image downloaded: {}", fileName);
+        try {
+            // Create "images" directory if it doesn't exist
+            Path imagesDir = Paths.get("images");
+            if (!Files.exists(imagesDir)) {
+                Files.createDirectories(imagesDir);
+            }
+
+            // Clean URL (replace spaces with %20)
+            if (imageUrl.contains(" ")) {
+                imageUrl = imageUrl.replace(" ", "%20");
+            }
+
+            logger.info("🖼️  Downloading image from: {}", imageUrl);
+
+            URL url = new URL(imageUrl);
+            try (InputStream in = url.openStream()) {
+                Path filePath = imagesDir.resolve(fileName);
+                Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
+                logger.info("✅ Image successfully downloaded: {}", filePath.toAbsolutePath());
+            }
+
+        } catch (IOException e) {
+            logger.error("❌ I/O error while downloading image from {}: {}", imageUrl, e.getMessage());
         } catch (Exception e) {
-            logger.warn("Failed to download image: {}", imageUrl);
+            logger.warn("⚠️ Failed to download image from URL: {}", imageUrl, e);
         }
     }
 
@@ -129,3 +160,6 @@ public class ElPaisScraper {
         }
     }
 }
+
+
+

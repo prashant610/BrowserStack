@@ -14,7 +14,8 @@ import org.slf4j.LoggerFactory;
 public class TranslateUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(TranslateUtil.class);
-    private static final String API_KEY = "AIzaSyAq5eCjzFYOL5dTtl_D-DKSYEdpWzzTmzQ";
+    // private static final String API_KEY = "AIzaSyAq5eCjzFYOL5dTtl_D-DKSYEdpWzzTmzQ";
+    private static final String API_KEY = "AIzaSyDfFM1EUxXLcvv1nkXoUQpYGTTmWvUwOmM";
 
     public static String translateText(String text) {
         String apiUrl = "https://translation.googleapis.com/language/translate/v2?key=" + API_KEY;
