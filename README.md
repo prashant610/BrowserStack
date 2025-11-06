@@ -94,4 +94,3 @@ Image URL: N/A
 📱 Successfully executed on 5 parallel BrowserStack threads
 🔐 Handled edge cases like missing titles, lazy images, and mobile rendering
 🚀 Fully automated, scalable, and well-logged scraping suite
-
