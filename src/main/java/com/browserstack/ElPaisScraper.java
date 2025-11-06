@@ -1,166 +1,3 @@
-// package com.browserstack;
-
-// import org.openqa.selenium.*;
-// import org.openqa.selenium.support.ui.ExpectedConditions;
-// import org.openqa.selenium.support.ui.WebDriverWait;
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
-
-// import java.io.InputStream;
-// import java.io.IOException;
-// import java.net.URL;
-// import java.nio.file.*;
-// import java.util.*;
-
-// public class ElPaisScraper {
-
-//     private static final Logger logger = LoggerFactory.getLogger(ElPaisScraper.class);
-
-//     public static void run(WebDriver driver) {
-//         try {
-//             driver.get("https://elpais.com/opinion/");
-//             WebDriverWait wait = new WebDriverWait(driver, 15);
-
-//             try {
-//                 WebElement allowCookiesButton = wait.until(
-//                         ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),'Accept')]")));
-//                 allowCookiesButton.click();
-//                 logger.info("'Allow Cookies' button clicked.");
-//             } catch (Exception e) {
-//                 logger.info("'Allow Cookies' button not found or already handled.");
-//             }
-
-//             wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("article")));
-//             List<WebElement> articles = driver.findElements(By.tagName("article"));
-
-//             int count = Math.min(5, articles.size());
-//             logger.info("Found {} articles. Extracting top {}...", articles.size(), count);
-
-//             List<String> translatedTitles = new ArrayList<>();
-
-//             for (int i = 0; i < count; i++) {
-//                 WebElement article = articles.get(i);
-
-//                 try {
-//                     ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", article);
-//                     Thread.sleep(500);
-//                 } catch (Exception ignored) {}
-
-//                 String title = "[No title]";
-//                 try {
-//                     WebElement header = article.findElement(By.tagName("header"));
-//                     if (header != null) {
-//                         title = header.getText().trim();
-//                         logger.info("Article #{} Title found.", i + 1);
-//                     }
-//                 } catch (Exception e) {
-//                     logger.warn("No header for article #{}", i + 1);
-//                 }
-
-//                 String content = "[No content]";
-//                 try {
-//                     WebElement para = article.findElement(By.tagName("p"));
-//                     if (para != null) {
-//                         content = para.getText().trim();
-//                         logger.info("Content found for article #{}", i + 1);
-//                     }
-//                 } catch (Exception e) {
-//                     logger.warn("No paragraph for article #{}", i + 1);
-//                 }
-
-//                 String imageUrl = "";
-//                 try {
-//                     WebElement img = article.findElement(By.cssSelector("div span img"));
-
-//                     imageUrl = img.getAttribute("src");
-//                     if (imageUrl == null || imageUrl.isEmpty()) {
-//                         String srcset = img.getAttribute("srcset");
-//                         if (srcset != null && !srcset.isEmpty()) {
-//                             imageUrl = srcset.split("\\s+")[0];
-//                         }
-//                     }
-
-//                     if (imageUrl != null && !imageUrl.isEmpty() && imageUrl.startsWith("http")) {
-//                         downloadImage(imageUrl, "article_" + (i + 1) + ".jpg");
-//                     } else {
-//                         logger.warn("No valid image URL for article #{}", i + 1);
-//                     }
-
-//                 } catch (Exception e) {
-//                     logger.warn("No image found for article #{}", i + 1);
-//                 }
-
-//                 String translatedTitle = TranslateUtil.translateText(title);
-//                 translatedTitles.add(translatedTitle);
-
-//                 logger.info("\nArticle #{}\nTitle (ES): {}\nTitle (EN): {}\nContent: {}\nImage URL: {}\n-----------------------------",
-//                         i + 1, title, translatedTitle, content, imageUrl.isEmpty() ? "N/A" : imageUrl);
-//             }
-
-//             printRepeatedWords(translatedTitles);
-
-//         } catch (Exception e) {
-//             logger.error("Error during scraping", e);
-//         }
-//     }
-
-//     private static void downloadImage(String imageUrl, String fileName) {
-//         try {
-//             // Create "images" directory if it doesn't exist
-//             Path imagesDir = Paths.get("images");
-//             if (!Files.exists(imagesDir)) {
-//                 Files.createDirectories(imagesDir);
-//             }
-
-//             // Clean URL (replace spaces with %20)
-//             if (imageUrl.contains(" ")) {
-//                 imageUrl = imageUrl.replace(" ", "%20");
-//             }
-
-//             logger.info("🖼️  Downloading image from: {}", imageUrl);
-
-//             URL url = new URL(imageUrl);
-//             try (InputStream in = url.openStream()) {
-//                 Path filePath = imagesDir.resolve(fileName);
-//                 Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
-//                 logger.info("✅ Image successfully downloaded: {}", filePath.toAbsolutePath());
-//             }
-
-//         } catch (IOException e) {
-//             logger.error("❌ I/O error while downloading image from {}: {}", imageUrl, e.getMessage());
-//         } catch (Exception e) {
-//             logger.warn("⚠️ Failed to download image from URL: {}", imageUrl, e);
-//         }
-//     }
-
-//     private static void printRepeatedWords(List<String> titles) {
-//         Map<String, Integer> wordCount = new HashMap<>();
-
-//         for (String title : titles) {
-//             String[] words = title.toLowerCase().split("\\W+");
-//             for (String word : words) {
-//                 if (!word.isEmpty()) {
-//                     wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
-//                 }
-//             }
-//         }
-
-//         logger.info("\nRepeated words (more than twice) in translated titles:");
-//         boolean found = false;
-
-//         for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
-//             if (entry.getValue() > 2) {
-//                 logger.info("{}: {}", entry.getKey(), entry.getValue());
-//                 found = true;
-//             }
-//         }
-
-//         if (!found) {
-//             logger.info("No words repeated more than twice.");
-//         }
-//     }
-// }
-
 package com.browserstack;
 
 import org.openqa.selenium.*;
@@ -244,23 +81,50 @@ public class ElPaisScraper {
                     logger.warn("No paragraph for article #{}", i + 1);
                 }
 
+                // ✅ Robust Image Handling (lazy load + picture tag)
                 String imageUrl = "";
                 try {
-                    // ✅ Updated to handle new DOM: div > span > img
-                    WebElement img = article.findElement(By.cssSelector("div span img"));
-                    if (img != null) {
-                        imageUrl = img.getAttribute("src");
-                        if (imageUrl == null || imageUrl.isEmpty()) {
-                            imageUrl = img.getAttribute("srcset");
+                    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", article);
+                    Thread.sleep(500); // allow lazy-load JS to render
+
+                    // Try <img> first
+                    List<WebElement> imgs = article.findElements(By.tagName("img"));
+
+                    if (imgs.isEmpty()) {
+                        // Try <picture> → <source>
+                        List<WebElement> sources = article.findElements(By.tagName("source"));
+                        for (WebElement src : sources) {
+                            String srcset = src.getAttribute("srcset");
+                            if (srcset != null && !srcset.isEmpty()) {
+                                imageUrl = srcset.split(" ")[0]; // take first URL
+                                break;
+                            }
                         }
-                        if (imageUrl != null && !imageUrl.isEmpty()) {
-                            downloadImage(imageUrl, "article_" + (i + 1) + ".jpg");
-                        } else {
-                            logger.warn("Image URL missing for article #{}", i + 1);
+                    } else {
+                        // Use first <img>
+                        WebElement img = imgs.get(0);
+                        imageUrl = img.getAttribute("src");
+
+                        if (imageUrl == null || imageUrl.isEmpty()) {
+                            imageUrl = img.getAttribute("data-src");
+                        }
+
+                        if ((imageUrl == null || imageUrl.isEmpty()) && img.getAttribute("srcset") != null) {
+                            imageUrl = img.getAttribute("srcset").split(" ")[0];
                         }
                     }
+
+                    if (imageUrl != null && !imageUrl.isEmpty()) {
+                        downloadImage(imageUrl, "article_" + (i + 1) + ".jpg");
+                        logger.info("Image found and downloaded for article #{}", i + 1);
+                    } else {
+                        logger.warn("No image URL found inside article #{}", i + 1);
+                        // Optional: Uncomment below to debug HTML if needed
+                        // logger.debug("Article #{} HTML: {}", i + 1, article.getAttribute("innerHTML"));
+                    }
+
                 } catch (Exception e) {
-                    logger.warn("No image for article #{}", i + 1);
+                    logger.warn("Error locating or downloading image for article #{}", i + 1);
                 }
 
                 String translatedTitle = TranslateUtil.translateText(title);
@@ -314,5 +178,4 @@ public class ElPaisScraper {
         }
     }
 }
-
 

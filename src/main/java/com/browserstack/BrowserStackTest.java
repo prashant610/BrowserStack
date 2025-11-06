@@ -60,7 +60,7 @@ public class BrowserStackTest {
         androidCaps.put("real_mobile", "true");
         androidCaps.put("os_version", "13.0");
         androidCaps.put("browserName", "Android");
-        androidCaps.put("name", "AndroidTest");
+        androidCaps.put("name", " AndroidTest");
         capsList.add(androidCaps);
 
         ExecutorService executor = Executors.newFixedThreadPool(capsList.size());
